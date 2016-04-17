@@ -1,12 +1,25 @@
-﻿<Window x:Class="AlbumFinder.MainWindow"
+﻿<Window x:Class="AlbumFinder.Desktop.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:AlbumFinder"
+        xmlns:desktop="clr-namespace:AlbumFinder.Desktop"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <StackPanel Orientation="Vertical">
-        <local:FolderEntry />
+        <desktop:FolderEntry SelectedDirectoryChanged="FolderEntry_OnSelectedDirectoryChanged" />
+        <WrapPanel Name="ArtistPanel">
+            
+        </WrapPanel>
+        <ListBox Margin="20" ItemsSource="{Binding Items}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding Path=Name}" />
+                        <TextBlock Text="{Binding Path=Age}" />
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </StackPanel>
 </Window>

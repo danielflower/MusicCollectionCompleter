@@ -19,5 +19,16 @@ namespace AlbumFinder.Desktop.Services
             Artist = tagFile.Tag.FirstAlbumArtist;
             Album = tagFile.Tag.Album;
         }
+
+        public static string Normalise(string artist)
+        {
+            artist = artist.ToLowerInvariant().Trim();
+            if (artist.StartsWith("the "))
+                artist = artist.Substring(4);
+            if (artist.StartsWith("a "))
+                artist = artist.Substring(2);
+
+            return artist;
+        }
     }
 }

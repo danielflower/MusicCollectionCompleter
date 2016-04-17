@@ -24,5 +24,25 @@ namespace AlbumFinder.AlbumFinderTests.Services
 
             return new Song(file);
         }
+
+        [Test]
+        public void NormalisationIgnoresCaseAndArticles()
+        {
+            string[] pumpkins = {"The Smashing Pumpkins", "Smashing Pumpkins", "smashing pumpkins", "Smashing pumpkins "};
+            foreach (var name in pumpkins)
+            {
+                Assert.AreEqual("smashing pumpkins", Song.Normalise(name));
+            }
+        }
+
+        [Test]
+        public void NormalisationReturnsOriginalTrimmedStringIfAllBitsAreStripped()
+        {
+            string[] pumpkins = {"The ", "The", "the", " the "};
+            foreach (var name in pumpkins)
+            {
+                Assert.AreEqual("the", Song.Normalise(name));
+            }
+        }
     }
 }

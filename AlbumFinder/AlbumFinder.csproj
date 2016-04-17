@@ -67,8 +67,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Services\Album.cs" />
     <Compile Include="Services\AlbumDatabase.cs" />
     <Compile Include="Services\AlbumFinderException.cs" />
+    <Compile Include="Services\Artist.cs" />
     <Compile Include="Services\Song.cs" />
     <Compile Include="Services\SongFileFinder.cs" />
     <Page Include="FolderEntry.xaml">

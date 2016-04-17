@@ -12,7 +12,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
     
     public class SongFileFinderTest
     {
-        private static readonly DirectoryInfo dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "SampleDir"));
+        internal static readonly DirectoryInfo dir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "SampleDir"));
         SongFileFinder finder = new SongFileFinder(dir);
         
 
