@@ -18,11 +18,17 @@ namespace AlbumFinder.AlbumFinderTests.Services
 
         internal static Song GetSong(string path)
         {
+            var file = GetFile(path);
+
+            return new Song(file);
+        }
+
+        internal static FileInfo GetFile(string path)
+        {
             var file = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "SampleDir", path));
             if (!file.Exists)
                 throw new Exception("Could not find " + file.FullName);
-
-            return new Song(file);
+            return file;
         }
 
         [Test]

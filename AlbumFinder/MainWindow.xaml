@@ -6,23 +6,53 @@
         xmlns:desktop="clr-namespace:AlbumFinder.Desktop"
         xmlns:schema="clr-namespace:System.Xml.Schema;assembly=System.Xml"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Music Collection Completor" Height="500" Width="525">
     <Window.DataContext>
         <desktop:AppViewModel />
     </Window.DataContext>
-    <StackPanel Orientation="Vertical">
-        <desktop:FolderEntry SelectedDirectoryChanged="FolderEntry_OnSelectedDirectoryChanged"
+    <DockPanel LastChildFill="True">
+        <desktop:FolderEntry DockPanel.Dock="Top" SelectedDirectoryChanged="FolderEntry_OnSelectedDirectoryChanged"
                              SelectedDirectory="{Binding Source={StaticResource Settings}, Path=Default.SearchDirPath}" />
-        <WrapPanel Name="ArtistPanel">
-            <TextBlock Text="{Binding Artists.Count}"></TextBlock>
-            <ListBox ItemsSource="{Binding Artists}" Name="ArtistsListBox">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}"></TextBlock>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </WrapPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <DockPanel Grid.Column="0" Name="ArtistPanel" LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top" Text="{Binding Artists.Count, StringFormat=Found # artists}" />
+                <ScrollViewer Height="400">
+                    <ListBox ItemsSource="{Binding Artists}" Name="ArtistsListBox">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </DockPanel>
 
-    </StackPanel>
+            <DockPanel Grid.Column="1" Name="MissingAlbumsArtistPanel" LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top" Text="{Binding Artists.Count, StringFormat=Found # available}" />
+                <ScrollViewer Height="400">
+                    <ListBox ItemsSource="{Binding Artists}" Name="MissingAlbumsArtistsListBox">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </DockPanel>
+
+        </Grid>
+
+    </DockPanel>
+
 </Window>
