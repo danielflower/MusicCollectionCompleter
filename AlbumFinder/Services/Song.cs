@@ -30,5 +30,10 @@ namespace AlbumFinder.Desktop.Services
 
             return artist;
         }
+
+        public override string ToString()
+        {
+            return File.FullName;
+        }
     }
 }

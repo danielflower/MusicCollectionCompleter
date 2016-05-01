@@ -16,7 +16,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
             Assert.AreEqual("Blove Grapes (special edition)", bloveGrapes.Album);
         }
 
-        private static Song GetSong(string path)
+        internal static Song GetSong(string path)
         {
             var file = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "SampleDir", path));
             if (!file.Exists)

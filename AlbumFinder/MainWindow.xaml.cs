@@ -35,12 +35,12 @@ namespace AlbumFinder.Desktop
             DirectoryInfo dir = (DirectoryInfo) e.NewValue;
             SongFileFinder fileFinder = new SongFileFinder(dir);
             var cancel = new CancellationTokenSource();
-            var files = fileFinder.FindSongsAsync(cancel.Token);
-            var db = new AlbumDatabase();
+//            var files = fileFinder.FindSongsAsync(cancel.Token);
+//            var db = new AlbumDatabase();
 
-            db.ArtistAdded += a => _viewModel.Artists.Add(a);
+//            db.ArtistAdded += a => _viewModel.Artists.Add(a);
 
-            db.AddSongs(files.Result, cancel.Token);
+//            db.AddSongs(files.Result, cancel.Token);
 
 
         }

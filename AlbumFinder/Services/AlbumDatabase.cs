@@ -1,30 +1,27 @@
-﻿using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AlbumFinder.Desktop.Services
 {
     internal class AlbumDatabase
     {
+        private readonly IObserver<Artist> _artistObserver;
         private readonly Dictionary<string, Artist> _artists = new Dictionary<string, Artist>();
-        public event ArtistAddedEventHandler ArtistAdded;
-        public event AlbumAddedEventHandler AlbumAdded;
 
-        public Task AddSongs(List<Song> songs, CancellationToken token)
+        public AlbumDatabase(IObservable<Song> songObservable, IObserver<Artist> artistObserver)
         {
-            return Task.Factory.StartNew(() =>
+            _artistObserver = artistObserver;
+            songObservable.Subscribe(OnNext, artistObserver.OnCompleted);
+        }
+        
+
+        private void OnNext(Song song)
+        {
+            song.LoadInfo();
+            if (!string.IsNullOrEmpty(song.Artist) && !string.IsNullOrEmpty(song.Album))
             {
-                foreach (var song in songs)
-                {
-                    if (token.IsCancellationRequested)
-                        return;
-                    song.LoadInfo();
-                    if (!string.IsNullOrEmpty(song.Artist) && !string.IsNullOrEmpty(song.Album))
-                    {
-                        AddArtistAndAlbumFor(song);
-                    }
-                }
-            }, token);
+                AddArtistAndAlbumFor(song);
+            }
         }
 
         private void AddArtistAndAlbumFor(Song song)
@@ -34,12 +31,8 @@ namespace AlbumFinder.Desktop.Services
             {
                 Artist artist = new Artist(song.Artist, artistName);
                 _artists[artistName] = artist;
-                ArtistAdded?.Invoke(artist);
+                _artistObserver.OnNext(artist);
             }
         }
     }
-
-    public delegate void ArtistAddedEventHandler(Artist artist);
-
-    public delegate void AlbumAddedEventHandler(Album artist);
 }
