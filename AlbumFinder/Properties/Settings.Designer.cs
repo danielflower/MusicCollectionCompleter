@@ -22,5 +22,17 @@ namespace AlbumFinder.Desktop.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string SearchDirPath {
+            get {
+                return ((string)(this["SearchDirPath"]));
+            }
+            set {
+                this["SearchDirPath"] = value;
+            }
+        }
     }
 }

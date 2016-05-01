@@ -1,8 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Threading;
+using System.Reactive.Subjects;
 using System.Windows;
+using System.Windows.Threading;
 using AlbumFinder.Desktop.Services;
 
 namespace AlbumFinder.Desktop
@@ -12,47 +13,46 @@ namespace AlbumFinder.Desktop
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MyViewModel _viewModel;
-
+        
+        public AppViewModel ViewModel = new AppViewModel();
 
         public MainWindow()
         {
             InitializeComponent();
-            this.Loaded += MainWindow_Loaded;
+            DataContext = ViewModel;
         }
 
-        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-            _viewModel = new MyViewModel();
-            DataContext = _viewModel;
-        }
-        
 
         private void FolderEntry_OnSelectedDirectoryChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            Console.WriteLine("Dir selected");
-
-            DirectoryInfo dir = (DirectoryInfo) e.NewValue;
+            DirectoryInfo dir = new DirectoryInfo((string)e.NewValue);
             SongFileFinder fileFinder = new SongFileFinder(dir);
-            var cancel = new CancellationTokenSource();
-//            var files = fileFinder.FindSongsAsync(cancel.Token);
-//            var db = new AlbumDatabase();
 
-//            db.ArtistAdded += a => _viewModel.Artists.Add(a);
-
-//            db.AddSongs(files.Result, cancel.Token);
+            var songObserver = new Subject<Song>();
 
 
+            var artistObserver = new Subject<Artist>();
+            artistObserver.Subscribe(artist =>
+            {
+                Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => ViewModel.Artists.Add(artist)));
+            });
+
+
+            var db = new AlbumDatabase(songObserver, artistObserver);
+
+            fileFinder.FindSongsAsync(songObserver);
         }
+
     }
 
-    public class MyViewModel
+    public class AppViewModel
     {
-        public List<Artist> Artists { get; }
+        public ObservableCollection<Artist> Artists { get; }
 
-        public MyViewModel()
+        public AppViewModel()
         {
-            Artists = new List<Artist>();
+            Artists = new ObservableCollection<Artist>();
         }
     }
+    
 }

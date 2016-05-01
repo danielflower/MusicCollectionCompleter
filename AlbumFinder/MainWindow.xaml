@@ -4,22 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:desktop="clr-namespace:AlbumFinder.Desktop"
+        xmlns:schema="clr-namespace:System.Xml.Schema;assembly=System.Xml"
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
+    <Window.DataContext>
+        <desktop:AppViewModel />
+    </Window.DataContext>
     <StackPanel Orientation="Vertical">
-        <desktop:FolderEntry SelectedDirectoryChanged="FolderEntry_OnSelectedDirectoryChanged" />
+        <desktop:FolderEntry SelectedDirectoryChanged="FolderEntry_OnSelectedDirectoryChanged"
+                             SelectedDirectory="{Binding Source={StaticResource Settings}, Path=Default.SearchDirPath}" />
         <WrapPanel Name="ArtistPanel">
-            
+            <TextBlock Text="{Binding Artists.Count}"></TextBlock>
+            <ListBox ItemsSource="{Binding Artists}" Name="ArtistsListBox">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"></TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </WrapPanel>
-        <ListBox Margin="20" ItemsSource="{Binding Items}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{Binding Path=Name}" />
-                        <TextBlock Text="{Binding Path=Age}" />
-                    </StackPanel>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
+
     </StackPanel>
 </Window>
