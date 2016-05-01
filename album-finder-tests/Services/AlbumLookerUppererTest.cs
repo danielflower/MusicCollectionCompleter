@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reactive.Subjects;
-using System.Text;
-using System.Threading.Tasks;
 using AlbumFinder.Desktop.Services;
 using NUnit.Framework;
 
@@ -11,7 +6,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
 {
     public class AlbumLookerUppererTest
     {
-        private readonly AlbumLookerUpperer _looker = new AlbumLookerUpperer(new Subject<Artist>());
+        private readonly AlbumLookerUpperer _looker = new AlbumLookerUpperer();
 
         [Test]
         public void CanCallITunesAndGetAJsonResponse()

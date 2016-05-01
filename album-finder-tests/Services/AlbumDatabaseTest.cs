@@ -16,27 +16,21 @@ namespace AlbumFinder.AlbumFinderTests.Services
         [Test]
         public void RaisesEventsWhenThingsAreDetected()
         {
-            var songObservable = new Subject<Song>();
             var artistObserver = new Subject<Artist>();
             var actual = new List<string>();
-            artistObserver.Subscribe(artist => actual.Add(artist.Name.ToLowerInvariant()));
+            artistObserver.Subscribe(artist => actual.Add(artist.NormalisedName.ToLowerInvariant()));
 
-            new AlbumDatabase(songObservable, artistObserver);
-            Task.Factory.StartNew(() =>
-            {
-                songObservable.OnNext(SongTest.GetSong("Blink $potter\\Kanwella\\01 Prognosis.mp3"));
-                songObservable.OnNext(SongTest.GetSong("Blink $potter\\Mutey & The Chuck\\01 Hart Start.mp3"));
-                songObservable.OnNext(SongTest.GetSong("Blink $potter\\Mutey & The Chuck\\02 Monk Nonk.mp3"));
-                songObservable.OnNext(
-                    SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 1\\01 Blove Grapes!.mp3"));
-                songObservable.OnNext(
-                    SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 2\\01 Graphes Blove.mp3"));
-                songObservable.OnCompleted();
-            });
+            var db = new AlbumDatabase(artistObserver);
+            db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Kanwella\\01 Prognosis.mp3"));
+            db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Mutey & The Chuck\\01 Hart Start.mp3"));
+            db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Mutey & The Chuck\\02 Monk Nonk.mp3"));
+            db.ProcessSongAsync(SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 1\\01 Blove Grapes!.mp3"));
+            db.ProcessSongAsync(SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 2\\01 Graphes Blove.mp3"));
+            db.OnAllSongsAdded();
             artistObserver.Wait();
 
             CollectionAssert.AllItemsAreUnique(actual);
-            CollectionAssert.AreEquivalent(new[] {"blink $potter", "the can't notters"}, actual);
+            CollectionAssert.AreEquivalent(new[] {"blink $potter", "can't notters"}, actual);
         }
 
 //        [Test]

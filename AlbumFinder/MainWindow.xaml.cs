@@ -40,8 +40,9 @@ namespace AlbumFinder.Desktop
             });
 
 
-            var db = new AlbumDatabase(songObserver, artistObserver);
-
+            var db = new AlbumDatabase(artistObserver);
+            songObserver.Subscribe(db.ProcessSongAsync, db.OnAllSongsAdded);
+            
             fileFinder.FindSongsAsync(songObserver);
         }
 

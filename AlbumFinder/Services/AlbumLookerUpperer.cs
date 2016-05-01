@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AlbumFinder.Desktop.Services
@@ -11,11 +12,13 @@ namespace AlbumFinder.Desktop.Services
         private const string ITunesSearchUrl =
             "https://itunes.apple.com/search?term={artist-name}&media=music&entity=album&attribute=artistTerm";
 
-        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly HttpClient _httpClient;
         private readonly AlbumJsonParser _parser = new AlbumJsonParser(5);
 
         public AlbumLookerUpperer()
         {
+            ServicePointManager.DefaultConnectionLimit = 20;
+            _httpClient = new HttpClient();
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
         }
