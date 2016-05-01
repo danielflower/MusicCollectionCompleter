@@ -29,11 +29,13 @@ namespace AlbumFinder.Desktop
             SongFileFinder fileFinder = new SongFileFinder(dir);
 
             var songObserver = new Subject<Song>();
+            var albumLookerUpperer = new AlbumLookerUpperer();
 
 
             var artistObserver = new Subject<Artist>();
             artistObserver.Subscribe(artist =>
             {
+                albumLookerUpperer.ProcessArtistAsync(artist);
                 Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => ViewModel.Artists.Add(artist)));
             });
 
@@ -43,6 +45,15 @@ namespace AlbumFinder.Desktop
             fileFinder.FindSongsAsync(songObserver);
         }
 
+        private void MissingAlbumsArtistsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count != 1)
+            {
+                return;
+            }
+            var addedItem = (Artist)e.AddedItems[0];
+            MissingAlbumsPanel.DataContext = addedItem;
+        }
     }
 
     public class AppViewModel

@@ -25,7 +25,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             
-            <DockPanel Grid.Column="0" Name="ArtistPanel" LastChildFill="True">
+            <DockPanel Grid.Row="0" Grid.Column="0" Name="ArtistPanel" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Top" Text="{Binding Artists.Count, StringFormat=Found # artists}" />
                 <ScrollViewer Height="400">
                     <ListBox ItemsSource="{Binding Artists}" Name="ArtistsListBox">
@@ -38,10 +38,23 @@
                 </ScrollViewer>
             </DockPanel>
 
-            <DockPanel Grid.Column="1" Name="MissingAlbumsArtistPanel" LastChildFill="True">
+            <DockPanel Grid.Row="0" Grid.Column="1" Name="MissingAlbumsArtistPanel" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Top" Text="{Binding Artists.Count, StringFormat=Found # available}" />
                 <ScrollViewer Height="400">
-                    <ListBox ItemsSource="{Binding Artists}" Name="MissingAlbumsArtistsListBox">
+                    <ListBox ItemsSource="{Binding Artists}" Name="MissingAlbumsArtistsListBox" SelectionChanged="MissingAlbumsArtistsListBox_SelectionChanged">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </DockPanel>
+
+            <DockPanel Grid.Row="0" Grid.Column="2" Name="MissingAlbumsPanel" LastChildFill="True">
+                <TextBlock DockPanel.Dock="Top" Text="Available albums" />
+                <ScrollViewer Height="400">
+                    <ListBox ItemsSource="{Binding MissingAlbums}" Name="MissingAlbumsListBox">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}" />

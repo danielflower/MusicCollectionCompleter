@@ -43,4 +43,5 @@ namespace AlbumFinder.Desktop.Services
 
         public string ITunesUrl => "https://itunes.apple.com/us/album/id" + ITunesCollectionId + "?at=1001l55M";
     }
+    
 }

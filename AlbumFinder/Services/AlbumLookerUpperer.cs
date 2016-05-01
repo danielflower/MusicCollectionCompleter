@@ -11,24 +11,31 @@ namespace AlbumFinder.Desktop.Services
         private const string ITunesSearchUrl =
             "https://itunes.apple.com/search?term={artist-name}&media=music&entity=album&attribute=artistTerm";
 
-        private readonly HttpClient httpClient = new HttpClient();
+        private readonly HttpClient _httpClient = new HttpClient();
+        private readonly AlbumJsonParser _parser = new AlbumJsonParser(5);
 
         public AlbumLookerUpperer()
         {
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(MediaTypeWithQualityHeaderValue.Parse("application/json"));
+        }
+
+        public void ProcessArtistAsync(Artist artist)
+        {
+            GetJsonAsync(artist.Name)
+                .ContinueWith(task => { artist.AddAvailableAlbums(_parser.ToAlbums(task.Result)); });
         }
 
         public Task<string> GetJsonAsync(string artist)
         {
             string url = ITunesSearchUrl.Replace("{artist-name}", WebUtility.UrlEncode(artist));
-            return httpClient.GetStringAsync(url);
+            return _httpClient.GetStringAsync(url);
         }
 
         public void Dispose()
         {
-            httpClient.CancelPendingRequests();
-            httpClient.Dispose();
+            _httpClient.CancelPendingRequests();
+            _httpClient.Dispose();
         }
     }
 }
