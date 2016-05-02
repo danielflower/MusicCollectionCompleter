@@ -20,14 +20,12 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="1*" />
             </Grid.RowDefinitions>
 
             <DockPanel Grid.Row="0" Grid.Column="0" Name="ArtistPanel" LastChildFill="True">
                 <TextBlock DockPanel.Dock="Top" Text="{Binding Artists.Count, StringFormat=Found # artists}" />
                 <ListView ItemsSource="{Binding Artists}" Name="ArtistsListBox"
-                         Height="400"
                           SelectionChanged="MissingAlbumsArtistsListBox_SelectionChanged" SelectionMode="Single">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -46,7 +44,7 @@
                     <services:Artist />
                 </DockPanel.DataContext>
                 <TextBlock DockPanel.Dock="Top" Text="Missing albums" />
-                <ScrollViewer Height="400" Name="MissingAlbumsScrollViewer" Background="Transparent">
+                <ScrollViewer Height="{Binding ActualHeight, ElementName=ArtistsListBox}" Name="MissingAlbumsScrollViewer" Background="Transparent">
                     <ItemsControl ItemsSource="{Binding MissingAlbums}" Name="MissingAlbumsListBox">
 
                         <ItemsControl.ItemTemplate>
