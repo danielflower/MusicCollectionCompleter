@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Reactive.Subjects;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Threading;
 using AlbumFinder.Desktop.Services;
 
@@ -20,8 +22,16 @@ namespace AlbumFinder.Desktop
         {
             InitializeComponent();
             DataContext = ViewModel;
+            Loaded += MainWindow_Loaded;
         }
 
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            var collectionView = CollectionViewSource.GetDefaultView(ArtistsListBox.ItemsSource);
+            collectionView.SortDescriptions.Clear();
+            collectionView.SortDescriptions.Add(new SortDescription("NormalisedName", ListSortDirection.Ascending));
+            collectionView.Refresh();
+        }
 
         private void FolderEntry_OnSelectedDirectoryChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
@@ -36,7 +46,10 @@ namespace AlbumFinder.Desktop
             artistObserver.Subscribe(artist =>
             {
                 albumLookerUpperer.ProcessArtistAsync(artist);
-                OnGuiThread(() => ViewModel.Artists.Add(artist));
+                OnGuiThread(() =>
+                {
+                    ViewModel.Artists.Add(artist);
+                });
             });
 
 
