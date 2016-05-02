@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="MusicCollectionCompleter.Desktop.FolderEntry"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MusicCollectionCompleter.Desktop"
+             mc:Ignorable="d" 
+             d:DesignHeight="20" d:DesignWidth="300">
+    <DockPanel>
+        <Button Margin="0" Padding="0" DockPanel.Dock="Right" Width="Auto" Click="OnStartClicked">Start scanning</Button>
+        <Button Margin="0" Padding="0" DockPanel.Dock="Right" Width="Auto" Click="BrowseFolder">Select folder</Button>
+        <TextBox Height="Auto" HorizontalAlignment="Stretch" DockPanel.Dock="Right" 
+           Text="{Binding SelectedDirectory, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+    </DockPanel>
+</UserControl>
