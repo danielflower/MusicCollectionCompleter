@@ -73,6 +73,7 @@
     <Compile Include="Services\AlbumDatabaseTest.cs" />
     <Compile Include="Services\AlbumJsonParserTest.cs" />
     <Compile Include="Services\AlbumLookerUppererTest.cs" />
+    <Compile Include="Services\AlbumTest.cs" />
     <Compile Include="Services\ArtistTest.cs" />
     <Compile Include="Services\SongFileFinderTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -59,15 +59,5 @@ namespace MusicCollectionCompleter.MusicCollectionCompleterTests.Services
             return new Album(name, year, tunesCollectionId, "http://blah/blah", "http://blah/blah.png");
         }
 
-        [Test]
-        public void ParenthesesAreRemovedFromAlbumTitles()
-        {
-            Assert.AreEqual("pisces iscariot", Desktop.Services.Album.Normalise("Pisces Iscariot (Deluxe Edition)"));
-            Assert.AreEqual("pisces iscariot", Desktop.Services.Album.Normalise("The Pisces Iscariot (Deluxe Edition)"));
-            Assert.AreEqual("pisces iscariot", Desktop.Services.Album.Normalise("Pisces Iscariot"));
-            Assert.AreEqual("pisces iscariot", Desktop.Services.Album.Normalise("The Pisces Iscariot"));
-            Assert.AreEqual("pisces iscariot", Desktop.Services.Album.Normalise("Pisces Iscariot [Remastered]"));
-            Assert.AreEqual("(Deluxe Edition)", Desktop.Services.Album.Normalise("(Deluxe Edition)"));
-        }
     }
 }

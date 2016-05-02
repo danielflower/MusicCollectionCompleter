@@ -5,6 +5,9 @@ namespace MusicCollectionCompleter.Desktop.Services
 {
     public class Album : IEquatable<Album>
     {
+        private static readonly Regex ParenRemover = new Regex(@"[([].*[)\]]");
+        private static readonly Regex WhitespaceRemover = new Regex(@"\s+");
+        private static readonly Regex Punctuation = new Regex(@"[.,"":!?/-]");
         public string Name { get; }
         public int Year { get; }
         public long? ItunesCollectionId { get; }
@@ -52,19 +55,20 @@ namespace MusicCollectionCompleter.Desktop.Services
 
         public static string Normalise(string originalName)
         {
-            
             string name = originalName.ToLowerInvariant();
             name = DisplayName(name);
             if (name.StartsWith("the ", StringComparison.InvariantCultureIgnoreCase))
                 name = name.Substring("the ".Length);
-            name = name.Replace("&", "and");
+            name = name.Replace("&", " and ");
+            name = name.Replace("'", "");
+            name = Punctuation.Replace(name, " ");
+            name = WhitespaceRemover.Replace(name, "").Trim();
             return name.Length == 0 ? originalName.Trim() : name;
         }
 
         public static string DisplayName(string name)
         {
-            Regex regex = new Regex("[([].*[)\\]]");
-            name = regex.Replace(name, "").Trim().Replace("  ", " ");
+            name = ParenRemover.Replace(name, "").Trim().Replace("  ", " ");
             return name;
         }
     }

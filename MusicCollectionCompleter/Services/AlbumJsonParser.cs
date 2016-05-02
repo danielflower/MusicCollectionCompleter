@@ -39,7 +39,7 @@ namespace MusicCollectionCompleter.Desktop.Services
                         {
                             string albumName = Album.DisplayName((string) album["collectionName"]);
                             var normalisedAlbumName = Album.Normalise(albumName);
-                            if (_excludeEPs && normalisedAlbumName.EndsWith(" - ep"))
+                            if (_excludeEPs && albumName.EndsWith(" ep", StringComparison.InvariantCultureIgnoreCase))
                             {
 
                             }

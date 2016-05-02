@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reactive;
 using System.Reactive.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace MusicCollectionCompleter.Desktop.Services
 {
     class SongFileFinder
     {
-        private static readonly string[] Extensions = {".mp3", ".m4a"};
+        private static readonly string[] Extensions = {".mp3", ".m4a", ".wma"};
         private readonly DirectoryInfo _dir;
 
         public SongFileFinder(DirectoryInfo dir)

@@ -46,6 +46,7 @@ namespace MusicCollectionCompleter.Desktop.Services
                     artist = new Artist(song.Artist, artistName);
                     _artists[artistName] = artist;
                     _artistObserver.OnNext(artist);
+                    Console.WriteLine(artist.Name + " (" + artist.NormalisedName + ")");
                 }
                 artist.AddOwnedAlbum(new Album(song.Album));
                 

@@ -57,7 +57,10 @@ namespace MusicCollectionCompleter.Desktop.Services
         {
             lock (_ownedAlbums)
                 if (!_ownedAlbums.Contains(album))
+                {
+                    Console.WriteLine(" - " + album.Name + " (" + album.NormalisedName + ")");
                     _ownedAlbums.Add(album);
+                }
             UpdateMissingAlbums();
         }
 
