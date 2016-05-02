@@ -49,7 +49,9 @@ namespace AlbumFinder.Desktop.Services
 
                                 var year = GetYear((string) album["releaseDate"]);
                                 var tunesCollectionId = Convert.ToInt64((double) album["collectionId"]);
-                                var currentAlbum = new Album(albumName, year, tunesCollectionId);
+                                var albumUrl = (string) album["collectionViewUrl"];
+                                var artUrl = (string) album["artworkUrl60"];
+                                var currentAlbum = new Album(albumName, year, tunesCollectionId, albumUrl, artUrl);
                                 if (existing == null)
                                 {
                                     albums.Add(currentAlbum);

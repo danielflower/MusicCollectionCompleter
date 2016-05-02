@@ -10,6 +10,8 @@ namespace AlbumFinder.Desktop.Services
         private readonly List<Album> _ownedAlbums = new List<Album>();
         private readonly List<Album> _missingAlbums = new List<Album>();
 
+        public Artist() : this(null, null) { } // For XAML support
+
         public Artist(string name, string normalisedName)
         {
             Name = name;

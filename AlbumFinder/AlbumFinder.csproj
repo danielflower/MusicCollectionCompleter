@@ -87,6 +87,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ITunesAlbumLink.cs" />
     <Compile Include="Services\Album.cs" />
     <Compile Include="Services\AlbumDatabase.cs" />
     <Compile Include="Services\AlbumFinderException.cs" />

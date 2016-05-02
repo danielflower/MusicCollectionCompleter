@@ -14,8 +14,8 @@ namespace AlbumFinder.AlbumFinderTests.Services
         public void CanIdentifyMissingAlbums()
         {
             Artist artist = new Artist("Blur", "blur");
-            var modernLifeIsRubbish = new Album("Modern Life is Rubbish", 1992, 892374589);
-            artist.AddAvailableAlbums(new[] {new Album("Blur", 1999, 12341234), modernLifeIsRubbish});
+            var modernLifeIsRubbish = new Album("Modern Life is Rubbish", 1992, 892374589, "http://blah/blah", "http://blah/blah.jpg");
+            artist.AddAvailableAlbums(new[] {new Album("Blur", 1999, 12341234, "http://blah/blah", "http://blah/blah.jpg"), modernLifeIsRubbish});
             artist.AddOwnedAlbum(new Album("the blur"));
             artist.AddOwnedAlbum(new Album("Great Escape"));
 

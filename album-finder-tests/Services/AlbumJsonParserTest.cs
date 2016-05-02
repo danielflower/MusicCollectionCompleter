@@ -56,7 +56,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
 
         private static Album Album(string name, int year, long tunesCollectionId)
         {
-            return new Album(name, year, tunesCollectionId);
+            return new Album(name, year, tunesCollectionId, "http://blah/blah", "http://blah/blah.png");
         }
 
         [Test]

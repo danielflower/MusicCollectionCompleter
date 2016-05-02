@@ -10,8 +10,9 @@ namespace AlbumFinder.Desktop.Services
 {
     internal class AlbumLookerUpperer : IAlbumLookerUpperer, IDisposable
     {
-        private const string ITunesSearchUrl =
-            "https://itunes.apple.com/search?term={artist-name}&media=music&entity=album&attribute=artistTerm";
+        private const string ItunesAffiliateId = "1001l55M";
+        private const string ItunesSearchUrl =
+            "https://itunes.apple.com/search?term={artist-name}&media=music&entity=album&attribute=artistTerm&at=" + ItunesAffiliateId;
 
         private readonly HttpClient _httpClient;
         private readonly AlbumJsonParser _parser = new AlbumJsonParser(5, true);
@@ -35,7 +36,7 @@ namespace AlbumFinder.Desktop.Services
 
         public Task<string> GetJsonAsync(string artist)
         {
-            string url = ITunesSearchUrl.Replace("{artist-name}", WebUtility.UrlEncode(artist));
+            string url = ItunesSearchUrl.Replace("{artist-name}", WebUtility.UrlEncode(artist));
             return _httpClient.GetStringAsync(url);
         }
 

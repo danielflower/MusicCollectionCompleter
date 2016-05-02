@@ -7,18 +7,22 @@ namespace AlbumFinder.Desktop.Services
     {
         public string Name { get; }
         public int Year { get; }
-        public long? ITunesCollectionId { get; }
+        public long? ItunesCollectionId { get; }
         public string NormalisedName { get; }
+        public string ItunesAlbumLink { get;  }
+        public string AlbumCoverUrl { get; }
 
-        public Album(string name) : this (name, 1900, null)
+        public Album(string name) : this (name, 1900, null, null, null)
         {
         }
-        public Album(string name, int year, long? tunesCollectionId)
+        public Album(string name, int year, long? tunesCollectionId, string itunesAlbumLink, string albumCoverUrl)
         {
             Name = name;
             Year = year;
-            ITunesCollectionId = tunesCollectionId;
+            ItunesCollectionId = tunesCollectionId;
             NormalisedName = Normalise(name);
+            ItunesAlbumLink = itunesAlbumLink;
+            AlbumCoverUrl = albumCoverUrl;
         }
 
         public bool Equals(Album other)
@@ -43,10 +47,8 @@ namespace AlbumFinder.Desktop.Services
 
         public override string ToString()
         {
-            return (ITunesCollectionId == null) ? Name : Name + " (" + Year + ") - " + ITunesCollectionId;
+            return (ItunesCollectionId == null) ? Name : Name + " (" + Year + ") - " + ItunesCollectionId;
         }
-
-        public string ITunesUrl => (ITunesCollectionId == null) ? null : "https://itunes.apple.com/us/album/id" + ITunesCollectionId + "?at=1001l55M";
 
         public static string Normalise(string originalName)
         {
