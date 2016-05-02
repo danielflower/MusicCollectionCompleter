@@ -18,7 +18,8 @@ namespace AlbumFinder.AlbumFinderTests.Services
         {
             var artistObserver = new Subject<Artist>();
             var actual = new List<string>();
-            artistObserver.Subscribe(artist => actual.Add(artist.NormalisedName.ToLowerInvariant()));
+            ManualResetEvent latch = new ManualResetEvent(false);
+            artistObserver.Subscribe(artist => actual.Add(artist.NormalisedName.ToLowerInvariant()), () => latch.Set());
 
             var db = new AlbumDatabase(artistObserver);
             db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Kanwella\\01 Prognosis.mp3"));
@@ -27,7 +28,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
             db.ProcessSongAsync(SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 1\\01 Blove Grapes!.mp3"));
             db.ProcessSongAsync(SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 2\\01 Graphes Blove.mp3"));
             db.OnAllSongsAdded();
-            artistObserver.Wait();
+            Assert.IsTrue(latch.WaitOne(5000), "Timed out waiting for subscription completion");
 
             CollectionAssert.AllItemsAreUnique(actual);
             CollectionAssert.AreEquivalent(new[] {"blink $potter", "can't notters"}, actual);

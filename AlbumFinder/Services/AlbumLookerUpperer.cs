@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -13,7 +14,7 @@ namespace AlbumFinder.Desktop.Services
             "https://itunes.apple.com/search?term={artist-name}&media=music&entity=album&attribute=artistTerm";
 
         private readonly HttpClient _httpClient;
-        private readonly AlbumJsonParser _parser = new AlbumJsonParser(5);
+        private readonly AlbumJsonParser _parser = new AlbumJsonParser(5, true);
 
         public AlbumLookerUpperer()
         {
@@ -26,7 +27,10 @@ namespace AlbumFinder.Desktop.Services
         public void ProcessArtistAsync(Artist artist)
         {
             GetJsonAsync(artist.Name)
-                .ContinueWith(task => { artist.AddAvailableAlbums(_parser.ToAlbums(task.Result)); });
+                .ContinueWith(task =>
+                {
+                    artist.AddAvailableAlbums(_parser.ToAlbums(artist.NormalisedName, task.Result));
+                });
         }
 
         public Task<string> GetJsonAsync(string artist)

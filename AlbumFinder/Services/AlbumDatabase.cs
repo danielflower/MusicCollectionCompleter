@@ -32,15 +32,23 @@ namespace AlbumFinder.Desktop.Services
 
         private void AddArtistAndAlbumFor(Song song)
         {
-            var artistName = Song.Normalise(song.Artist);
+            var artistName = Artist.Normalise(song.Artist);
             lock (_artists)
             {
-                if (!_artists.ContainsKey(artistName))
+                Artist artist;
+                
+                if (_artists.ContainsKey(artistName))
                 {
-                    Artist artist = new Artist(song.Artist, artistName);
+                    artist = _artists[artistName];
+                }
+                else
+                {
+                    artist = new Artist(song.Artist, artistName);
                     _artists[artistName] = artist;
                     _artistObserver.OnNext(artist);
                 }
+                artist.AddOwnedAlbum(new Album(song.Album));
+                
             }
         }
 

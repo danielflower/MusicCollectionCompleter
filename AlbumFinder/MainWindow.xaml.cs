@@ -36,7 +36,7 @@ namespace AlbumFinder.Desktop
             artistObserver.Subscribe(artist =>
             {
                 albumLookerUpperer.ProcessArtistAsync(artist);
-                Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() => ViewModel.Artists.Add(artist)));
+                OnGuiThread(() => ViewModel.Artists.Add(artist));
             });
 
 
@@ -44,6 +44,11 @@ namespace AlbumFinder.Desktop
             songObserver.Subscribe(db.ProcessSongAsync, db.OnAllSongsAdded);
             
             fileFinder.FindSongsAsync(songObserver);
+        }
+
+        internal static void OnGuiThread(Action target)
+        {
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, new Action(target));
         }
 
         private void MissingAlbumsArtistsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Windows;
-using System.Windows.Threading;
+using System.Linq;
 
 namespace AlbumFinder.Desktop.Services
 {
     public class Artist
     {
         private readonly List<Album> _availableAlbums = new List<Album>();
-        private readonly ObservableCollection<Album> _missingAlbums = new ObservableCollection<Album>();
+        private readonly List<Album> _ownedAlbums = new List<Album>();
+        private readonly List<Album> _missingAlbums = new List<Album>();
 
         public Artist(string name, string normalisedName)
         {
@@ -20,7 +19,7 @@ namespace AlbumFinder.Desktop.Services
         public string Name { get; }
         public string NormalisedName { get; }
 
-        public ObservableCollection<Album> MissingAlbums => _missingAlbums;
+        public List<Album> MissingAlbums => _missingAlbums;
 
         public IList<Album> AvailableAlbums
         {
@@ -29,6 +28,14 @@ namespace AlbumFinder.Desktop.Services
                 lock (_availableAlbums)
                     return new List<Album>(_availableAlbums);
             }
+        }
+
+        public void AddOwnedAlbum(Album album)
+        {
+            lock (_ownedAlbums)
+                if (!_ownedAlbums.Contains(album))
+                    _ownedAlbums.Add(album);
+            UpdateMissingAlbums();
         }
 
         public void AddAvailableAlbums(IEnumerable<Album> albums)
@@ -45,17 +52,30 @@ namespace AlbumFinder.Desktop.Services
             lock (_availableAlbums)
                 lock (_missingAlbums)
                 {
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, new Action(() =>
+                    _missingAlbums.Clear();
+                    foreach (var album in _availableAlbums)
                     {
-                        foreach (var album in _availableAlbums)
+                        var b = from owned in _ownedAlbums
+                            where String.Equals(owned.NormalisedName, album.NormalisedName, StringComparison.InvariantCultureIgnoreCase)
+                            select owned;
+                        if (!b.Any())
                         {
-                            if (!_missingAlbums.Contains(album))
-                            {
-                                _missingAlbums.Add(album);
-                            }
+                            _missingAlbums.Add(album);
                         }
-                    }));
+                    }
                 }
+        }
+
+        public static string Normalise(string artist)
+        {
+            artist = artist.ToLowerInvariant().Trim();
+            if (artist.StartsWith("the "))
+                artist = artist.Substring(4);
+            if (artist.StartsWith("a "))
+                artist = artist.Substring(2);
+            artist = artist.Replace("&", "and");
+
+            return artist;
         }
     }
 }

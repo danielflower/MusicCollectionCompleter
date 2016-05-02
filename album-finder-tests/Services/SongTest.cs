@@ -37,7 +37,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
             string[] pumpkins = {"The Smashing Pumpkins", "Smashing Pumpkins", "smashing pumpkins", "Smashing pumpkins "};
             foreach (var name in pumpkins)
             {
-                Assert.AreEqual("smashing pumpkins", Song.Normalise(name));
+                Assert.AreEqual("smashing pumpkins", Artist.Normalise(name));
             }
         }
 
@@ -47,7 +47,7 @@ namespace AlbumFinder.AlbumFinderTests.Services
             string[] pumpkins = {"The ", "The", "the", " the "};
             foreach (var name in pumpkins)
             {
-                Assert.AreEqual("the", Song.Normalise(name));
+                Assert.AreEqual("the", Artist.Normalise(name));
             }
         }
     }

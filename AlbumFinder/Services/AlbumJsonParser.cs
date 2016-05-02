@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Json;
@@ -10,13 +11,15 @@ namespace AlbumFinder.Desktop.Services
     internal class AlbumJsonParser
     {
         private readonly int _minimumTracks;
+        private readonly bool _excludeEPs;
 
-        public AlbumJsonParser(int minimumTracks)
+        public AlbumJsonParser(int minimumTracks, bool excludeEPs)
         {
             _minimumTracks = minimumTracks;
+            _excludeEPs = excludeEPs;
         }
 
-        public IList<Album> ToAlbums(string json)
+        public IList<Album> ToAlbums(string expectedNormalisedArtistName, string json)
         {
             var albums = new List<Album>();
 
@@ -28,32 +31,39 @@ namespace AlbumFinder.Desktop.Services
                 string type = (string) album["collectionType"];
                 if (string.Equals("album", type, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var artistName = (string)album["artistName"];
-                    if (!string.Equals("Various Artists", artistName, StringComparison.InvariantCultureIgnoreCase))
+                    var artistName = Artist.Normalise((string)album["artistName"]);
+                    if (string.Equals(expectedNormalisedArtistName, artistName, StringComparison.InvariantCultureIgnoreCase))
                     {
                         var trackCount = Convert.ToInt32((double)album["trackCount"]);
                         if (trackCount >= _minimumTracks)
                         {
-                            var name = Normalise((string) album["collectionName"]);
-
-                            var existing = albums.Find(other => other.Name.Equals(name));
-
-                            var year = GetYear((string) album["releaseDate"]);
-                            var tunesCollectionId = Convert.ToInt64((double) album["collectionId"]);
-                            var currentAlbum = new Album(name, year, tunesCollectionId);
-                            if (existing == null)
+                            string albumName = Album.DisplayName((string) album["collectionName"]);
+                            var normalisedAlbumName = Album.Normalise(albumName);
+                            if (_excludeEPs && normalisedAlbumName.EndsWith(" - ep"))
                             {
-                                albums.Add(currentAlbum);
-                                albumToTrackCount[name] = trackCount;
+
                             }
                             else
                             {
-                                bool isShorter = trackCount < albumToTrackCount[name];
-                                if (isShorter)
+                                var existing = albums.Find(other => other.NormalisedName.Equals(normalisedAlbumName));
+
+                                var year = GetYear((string) album["releaseDate"]);
+                                var tunesCollectionId = Convert.ToInt64((double) album["collectionId"]);
+                                var currentAlbum = new Album(albumName, year, tunesCollectionId);
+                                if (existing == null)
                                 {
-                                    albums.Remove(existing);
                                     albums.Add(currentAlbum);
-                                    albumToTrackCount[name] = trackCount;
+                                    albumToTrackCount[normalisedAlbumName] = trackCount;
+                                }
+                                else
+                                {
+                                    bool isShorter = trackCount < albumToTrackCount[normalisedAlbumName];
+                                    if (isShorter)
+                                    {
+                                        albums.Remove(existing);
+                                        albums.Add(currentAlbum);
+                                        albumToTrackCount[normalisedAlbumName] = trackCount;
+                                    }
                                 }
                             }
                         }
@@ -81,15 +91,6 @@ namespace AlbumFinder.Desktop.Services
             {
                 return 1900;
             }
-        }
-
-        public static string Normalise(string originalName)
-        {
-            Regex regex = new Regex("\\(.*\\)");
-            string name = regex.Replace(originalName, "").Trim().Replace("  ", " ");
-            if (name.StartsWith("the ", StringComparison.InvariantCultureIgnoreCase))
-                name = name.Substring("the ".Length);
-            return name.Length == 0 ? originalName.Trim() : name;
         }
     }
 }
