@@ -59,6 +59,7 @@ namespace AlbumFinder.Desktop
             }
             var addedItem = (Artist)e.AddedItems[0];
             MissingAlbumsPanel.DataContext = addedItem;
+            MissingAlbumsScrollViewer.ScrollToTop();
         }
     }
 

@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Windows.Media;
+using AlbumFinder.Desktop.Annotations;
 
 namespace AlbumFinder.Desktop.Services
 {
-    public class Artist
+    public class Artist : INotifyPropertyChanged
     {
+        private static readonly Color Loading = Colors.Transparent;
+        private static readonly Color Missing = Colors.OrangeRed;
+        private static readonly Color Complete = Colors.LimeGreen;
+
         private readonly List<Album> _availableAlbums = new List<Album>();
         private readonly List<Album> _ownedAlbums = new List<Album>();
         private readonly List<Album> _missingAlbums = new List<Album>();
+        private Color _backgroundColor = Loading;
 
         public Artist() : this(null, null) { } // For XAML support
 
@@ -32,6 +41,18 @@ namespace AlbumFinder.Desktop.Services
             }
         }
 
+        public Color BackgroundColor
+        {
+            get { return _backgroundColor; }
+            set {
+                if (!Equals(value, _backgroundColor))
+                {
+                    _backgroundColor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public void AddOwnedAlbum(Album album)
         {
             lock (_ownedAlbums)
@@ -51,6 +72,7 @@ namespace AlbumFinder.Desktop.Services
 
         private void UpdateMissingAlbums()
         {
+            Color newColor = Loading;
             lock (_availableAlbums)
                 lock (_missingAlbums)
                 {
@@ -58,14 +80,18 @@ namespace AlbumFinder.Desktop.Services
                     foreach (var album in _availableAlbums)
                     {
                         var b = from owned in _ownedAlbums
-                            where String.Equals(owned.NormalisedName, album.NormalisedName, StringComparison.InvariantCultureIgnoreCase)
+                            where string.Equals(owned.NormalisedName, album.NormalisedName)
                             select owned;
                         if (!b.Any())
                         {
                             _missingAlbums.Add(album);
                         }
                     }
+                    newColor = (_missingAlbums.Count == 0) ? Complete : Missing;
                 }
+            BackgroundColor = newColor;
+            OnPropertyChanged(nameof(MissingAlbums));
+
         }
 
         public static string Normalise(string artist)
@@ -78,6 +104,14 @@ namespace AlbumFinder.Desktop.Services
             artist = artist.Replace("&", "and");
 
             return artist;
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
