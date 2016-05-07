@@ -97,6 +97,7 @@
     <Compile Include="Properties\Annotations.cs" />
     <Compile Include="Services\Album.cs" />
     <Compile Include="Services\AlbumDatabase.cs" />
+    <Compile Include="Services\AlbumList.cs" />
     <Compile Include="Services\MusicCollectionCompleterException.cs" />
     <Compile Include="Services\AlbumJsonParser.cs" />
     <Compile Include="Services\AlbumLookerUpperer.cs" />

@@ -5,6 +5,7 @@ using System.IO;
 using System.Reactive.Subjects;
 using System.Windows;
 using System.Windows.Data;
+using System.Windows.Documents;
 using System.Windows.Threading;
 using MusicCollectionCompleter.Desktop.Services;
 
@@ -67,7 +68,7 @@ namespace MusicCollectionCompleter.Desktop
 
         internal static void OnGuiThread(Action target)
         {
-            Application.Current.Dispatcher.Invoke(DispatcherPriority.Render, new Action(target));
+            Application.Current?.Dispatcher.Invoke(DispatcherPriority.Render, new Action(target));
         }
 
         private void MissingAlbumsArtistsListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
@@ -79,6 +80,16 @@ namespace MusicCollectionCompleter.Desktop
             var addedItem = (Artist)e.AddedItems[0];
             MissingAlbumsPanel.DataContext = addedItem;
             MissingAlbumsScrollViewer.ScrollToTop();
+        }
+
+        private void Hyperlink_OnClick(object sender, RoutedEventArgs e)
+        {
+            var artist = MissingAlbumsPanel.DataContext as Artist;
+            if (artist != null)
+            {
+                var album = (Album) ((Hyperlink) sender).DataContext;
+                artist.IgnoreAlbum(album);
+            }
         }
     }
 

@@ -57,6 +57,8 @@
                                         <TextBlock Text="{Binding Year, StringFormat=Release date: #}" />
                                         <LineBreak />
                                         <desktop:ITunesAlbumLink NavigateUri="{Binding ItunesAlbumLink}">View in browser</desktop:ITunesAlbumLink>
+                                        <TextBlock> - </TextBlock>
+                                        <Hyperlink Name="HideLink" Click="Hyperlink_OnClick">Hide</Hyperlink>
                                     </TextBlock>
                                 </StackPanel>
                             </DataTemplate>

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows.Data;
 using System.Windows.Media;
 using MusicCollectionCompleter.Desktop.Properties;
 
@@ -15,22 +14,29 @@ namespace MusicCollectionCompleter.Desktop.Services
         private static readonly Color Complete = Colors.LimeGreen;
 
         private readonly List<Album> _availableAlbums = new List<Album>();
+        private volatile bool _availableAlbumsKnown = false;
         private readonly List<Album> _ownedAlbums = new List<Album>();
-        private readonly List<Album> _missingAlbums = new List<Album>();
+        private readonly AlbumList _missingAlbums = new AlbumList();
         private Color _backgroundColor = Loading;
 
-        public Artist() : this(null, null) { } // For XAML support
+        public Artist() : this(null, null)
+        {
+        } // For XAML support
 
         public Artist(string name, string normalisedName)
         {
             Name = name;
             NormalisedName = normalisedName;
+            BindingOperations.EnableCollectionSynchronization(_missingAlbums, _missingAlbums);
         }
 
         public string Name { get; }
         public string NormalisedName { get; }
 
-        public List<Album> MissingAlbums => _missingAlbums;
+        public AlbumList MissingAlbums
+        {
+            get { return _missingAlbums; }
+        }
 
         public IList<Album> AvailableAlbums
         {
@@ -44,7 +50,8 @@ namespace MusicCollectionCompleter.Desktop.Services
         public Color BackgroundColor
         {
             get { return _backgroundColor; }
-            set {
+            set
+            {
                 if (!Equals(value, _backgroundColor))
                 {
                     _backgroundColor = value;
@@ -56,45 +63,47 @@ namespace MusicCollectionCompleter.Desktop.Services
         public void AddOwnedAlbum(Album album)
         {
             lock (_ownedAlbums)
-                if (!_ownedAlbums.Contains(album))
+                lock (_missingAlbums)
                 {
-                    Console.WriteLine(" - " + album.Name + " (" + album.NormalisedName + ")");
-                    _ownedAlbums.Add(album);
+                    if (!_ownedAlbums.Contains(album))
+                    {
+                        _ownedAlbums.Add(album);
+                    }
+                    _missingAlbums.Remove(album);
                 }
-            UpdateMissingAlbums();
+
+            UpdateBackgroundColor();
         }
 
         public void AddAvailableAlbums(IEnumerable<Album> albums)
         {
-            lock (_availableAlbums)
-                foreach (var album in albums)
-                    if (!_availableAlbums.Contains(album))
-                        _availableAlbums.Add(album);
-            UpdateMissingAlbums();
+            lock (_ownedAlbums)
+                lock (_missingAlbums)
+                    lock (_availableAlbums)
+                    {
+                        foreach (var album in albums)
+                        {
+                            if (!_availableAlbums.Contains(album))
+                                _availableAlbums.Add(album);
+                            if (!_ownedAlbums.Contains(album))
+                                _missingAlbums.Add(album);
+                        }
+                        _availableAlbumsKnown = true;
+                    }
+            UpdateBackgroundColor();
         }
 
-        private void UpdateMissingAlbums()
+        private void UpdateBackgroundColor()
         {
-            Color newColor;
-            lock (_availableAlbums)
+            Color newColor = Loading;
+            if (_availableAlbumsKnown)
+            {
                 lock (_missingAlbums)
                 {
-                    _missingAlbums.Clear();
-                    foreach (var album in _availableAlbums)
-                    {
-                        var b = from owned in _ownedAlbums
-                            where string.Equals(owned.NormalisedName, album.NormalisedName)
-                            select owned;
-                        if (!b.Any())
-                        {
-                            _missingAlbums.Add(album);
-                        }
-                    }
                     newColor = (_missingAlbums.Count == 0) ? Complete : Missing;
                 }
+            }
             BackgroundColor = newColor;
-            OnPropertyChanged(nameof(MissingAlbums));
-
         }
 
         public static string Normalise(string artist)
@@ -115,6 +124,15 @@ namespace MusicCollectionCompleter.Desktop.Services
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void IgnoreAlbum(Album album)
+        {
+            lock (_missingAlbums)
+            {
+                _missingAlbums.Remove(album);
+            }
+            UpdateBackgroundColor();
         }
     }
 }
