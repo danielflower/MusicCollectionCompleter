@@ -16,7 +16,7 @@ namespace MusicCollectionCompleter.Desktop.Services
             "https://itunes.apple.com/search?term={artist-name}&media=music&entity=album&attribute=artistTerm&at=" + ItunesAffiliateId;
 
         private readonly HttpClient _httpClient;
-        private readonly AlbumJsonParser _parser = new AlbumJsonParser(5, true);
+        private readonly AlbumJsonParser _parser = new AlbumJsonParser(5);
 
         public AlbumLookerUpperer()
         {

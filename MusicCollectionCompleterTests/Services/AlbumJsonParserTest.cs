@@ -11,7 +11,7 @@ namespace MusicCollectionCompleter.MusicCollectionCompleterTests.Services
         public void FiltersOutRubbish()
         {
             var json = Json("smashing-pumpkins.json");
-            var albums = new AlbumJsonParser(5, false).ToAlbums("smashing pumpkins", json);
+            var albums = new AlbumJsonParser(5).ToAlbums("smashing pumpkins", json);
             Album[] expected = {
                 Album("Machina - The Machines of God", 2000, 712756036),
                 Album("Greatest Hits", 2001, 712732565),
@@ -32,9 +32,11 @@ namespace MusicCollectionCompleter.MusicCollectionCompleterTests.Services
         public void FiltersOutNonRelatedBands()
         {
             var json = Json("Air.json");
-            var albums = new AlbumJsonParser(4, true).ToAlbums("air", json);
+            var albums = new AlbumJsonParser(4).ToAlbums("air", json);
             Album[] expected = {
                 Album("Moon Safari", 1998, 693063670),
+                Album("Premiers Symptômes - EP", 1999, 966652812),
+                Album("Playground Love - EP", 2000, 696809600),
                 Album("10 000 Hz Legend", 2001, 695721907),
                 Album("Talkie Walkie", 2004, 696641105),
                 Album("Pocket Symphony", 2007, 716499623),
