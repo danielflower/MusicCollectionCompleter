@@ -35,7 +35,13 @@ namespace MusicCollectionCompleter.Desktop
 
         private void FolderEntry_OnSelectedDirectoryChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            DirectoryInfo dir = new DirectoryInfo((string)e.NewValue);
+            var path = (string)e.NewValue;
+            if (!Directory.Exists(path))
+            {
+                MessageBox.Show(this, "The directory " + path + " does not exist.", "Sorry...", MessageBoxButton.OK);
+                return;
+            }
+            DirectoryInfo dir = new DirectoryInfo(path);
             SongFileFinder fileFinder = new SongFileFinder(dir);
 
             var songObserver = new Subject<Song>();

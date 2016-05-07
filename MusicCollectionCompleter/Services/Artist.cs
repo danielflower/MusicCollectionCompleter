@@ -75,7 +75,7 @@ namespace MusicCollectionCompleter.Desktop.Services
 
         private void UpdateMissingAlbums()
         {
-            Color newColor = Loading;
+            Color newColor;
             lock (_availableAlbums)
                 lock (_missingAlbums)
                 {

@@ -12,7 +12,8 @@ namespace MusicCollectionCompleter.Desktop
     /// </summary>
     public partial class FolderEntry : UserControl
     {
-        public static DependencyProperty SelectedDirectoryProperty = DependencyProperty.Register("SelectedDirectory", typeof(string), typeof(FolderEntry), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+        public static DependencyProperty SelectedDirectoryProperty = DependencyProperty.Register("SelectedDirectory", typeof(string), typeof(FolderEntry), 
+            new FrameworkPropertyMetadata(Environment.GetFolderPath(Environment.SpecialFolder.MyMusic, Environment.SpecialFolderOption.DoNotVerify), FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
         public static DependencyProperty DescriptionProperty = DependencyProperty.Register("Description", typeof(string), typeof(FolderEntry), new PropertyMetadata(null));
 
         public event DependencyPropertyChangedEventHandler SelectedDirectoryChanged;
@@ -36,7 +37,7 @@ namespace MusicCollectionCompleter.Desktop
             vm.SelectedFilePath = SelectedDirectory;
             vm.IsDirectoryChooser = true;
             bool? result = vm.Show();
-            if (result == true)
+            if (result == true && vm.SelectedFolder != null)
             {
                 SelectedDirectory = vm.SelectedFolder.Path;
                 BindingExpression thing = GetBindingExpression(SelectedDirectoryProperty);
