@@ -18,6 +18,7 @@ namespace MusicCollectionCompleter.Desktop
     {
         
         public AppViewModel ViewModel = new AppViewModel();
+        private AlbumIgonoranceDb _albumIgonoranceDb;
 
         public MainWindow()
         {
@@ -32,6 +33,10 @@ namespace MusicCollectionCompleter.Desktop
             collectionView.SortDescriptions.Clear();
             collectionView.SortDescriptions.Add(new SortDescription("NormalisedName", ListSortDirection.Ascending));
             collectionView.Refresh();
+
+            _albumIgonoranceDb = new AlbumIgonoranceDb(
+                new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "MusicCollectionCompleter")));
         }
 
         private void FolderEntry_OnSelectedDirectoryChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -47,16 +52,18 @@ namespace MusicCollectionCompleter.Desktop
 
             var songObserver = new Subject<Song>();
             var albumLookerUpperer = new AlbumLookerUpperer();
+            
 
 
             var artistObserver = new Subject<Artist>();
             artistObserver.Subscribe(artist =>
             {
                 albumLookerUpperer.ProcessArtistAsync(artist);
-                OnGuiThread(() =>
+                OnGuiThread(() => ViewModel.Artists.Add(artist));
+                foreach (var ignoredAlbum in _albumIgonoranceDb.GetIgnoredAlbums(artist.NormalisedName))
                 {
-                    ViewModel.Artists.Add(artist);
-                });
+                    artist.IgnoreAlbum(ignoredAlbum);
+                }
             });
 
 
@@ -89,6 +96,7 @@ namespace MusicCollectionCompleter.Desktop
             {
                 var album = (Album) ((Hyperlink) sender).DataContext;
                 artist.IgnoreAlbum(album);
+                _albumIgonoranceDb.IgnoreAlbum(artist.NormalisedName, album);
             }
         }
     }

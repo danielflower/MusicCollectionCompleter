@@ -71,6 +71,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Services\AlbumDatabaseTest.cs" />
+    <Compile Include="Services\AlbumIgonoranceDbTest.cs" />
     <Compile Include="Services\AlbumJsonParserTest.cs" />
     <Compile Include="Services\AlbumLookerUppererTest.cs" />
     <Compile Include="Services\AlbumTest.cs" />

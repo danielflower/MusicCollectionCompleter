@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
@@ -22,11 +23,11 @@ namespace MusicCollectionCompleter.MusicCollectionCompleterTests.Services
             artistObserver.Subscribe(artist => actual.Add(artist.NormalisedName.ToLowerInvariant()), () => latch.Set());
 
             var db = new AlbumDatabase(artistObserver);
-            db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Kanwella\\01 Prognosis.mp3"));
-            db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Mutey & The Chuck\\01 Hart Start.mp3"));
-            db.ProcessSongAsync(SongTest.GetSong("Blink $potter\\Mutey & The Chuck\\02 Monk Nonk.mp3"));
-            db.ProcessSongAsync(SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 1\\01 Blove Grapes!.mp3"));
-            db.ProcessSongAsync(SongTest.GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 2\\01 Graphes Blove.mp3"));
+            db.ProcessSongAsync(SongTest.GetSong(Path.Combine("Blink $potter", "Kanwella", "01 Prognosis.mp3")));
+            db.ProcessSongAsync(SongTest.GetSong(Path.Combine("Blink $potter", "Mutey & The Chuck", "01 Hart Start.mp3")));
+            db.ProcessSongAsync(SongTest.GetSong(Path.Combine("Blink $potter", "Mutey & The Chuck", "02 Monk Nonk.mp3")));
+            db.ProcessSongAsync(SongTest.GetSong(Path.Combine("The Can't Notters", "Blove Grapes (special edition)", "Disc 1", "01 Blove Grapes!.mp3")));
+            db.ProcessSongAsync(SongTest.GetSong(Path.Combine("The Can't Notters", "Blove Grapes (special edition)", "Disc 2", "01 Graphes Blove.mp3")));
             db.OnAllSongsAdded();
             Assert.IsTrue(latch.WaitOne(5000), "Timed out waiting for subscription completion");
 

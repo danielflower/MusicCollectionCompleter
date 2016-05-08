@@ -128,10 +128,7 @@ namespace MusicCollectionCompleter.Desktop.Services
 
         public void IgnoreAlbum(Album album)
         {
-            lock (_missingAlbums)
-            {
-                _missingAlbums.Remove(album);
-            }
+            AddOwnedAlbum(album);
             UpdateBackgroundColor();
         }
     }

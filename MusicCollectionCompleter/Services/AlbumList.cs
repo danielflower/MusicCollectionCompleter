@@ -1,24 +1,37 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MusicCollectionCompleter.Desktop.Services
 {
-    public class AlbumList : IList<Album>, INotifyCollectionChanged
+public class AlbumList : IList<Album>, INotifyCollectionChanged
+{
+    private readonly IList<Album> _listImplementation = new List<Album>();
+        
+    public event NotifyCollectionChangedEventHandler CollectionChanged;
+
+    private void OnChanged(NotifyCollectionChangedEventArgs e)
     {
-        private IList<Album> _listImplementation = new List<Album>();
+        MainWindow.OnGuiThread(() => CollectionChanged?.Invoke(this, e));
+    }
 
+    public void Add(Album item)
+    {
+        _listImplementation.Add(item);
+        OnChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+    }
 
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
-
-        private void OnChanged(NotifyCollectionChangedEventArgs e)
+    public bool Remove(Album item)
+    {
+        int index = _listImplementation.IndexOf(item);
+        var removed = index >= 0;
+        if (removed)
         {
-            MainWindow.OnGuiThread(() => CollectionChanged?.Invoke(this, e));
+            _listImplementation.RemoveAt(index);
+            OnChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
         }
+        return removed;
+    }
 
         public IEnumerator<Album> GetEnumerator()
         {
@@ -28,12 +41,6 @@ namespace MusicCollectionCompleter.Desktop.Services
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable) _listImplementation).GetEnumerator();
-        }
-
-        public void Add(Album item)
-        {
-            _listImplementation.Add(item);
-            OnChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
         }
 
         public void Clear()
@@ -49,18 +56,6 @@ namespace MusicCollectionCompleter.Desktop.Services
         public void CopyTo(Album[] array, int arrayIndex)
         {
             _listImplementation.CopyTo(array, arrayIndex);
-        }
-
-        public bool Remove(Album item)
-        {
-            int index = _listImplementation.IndexOf(item);
-            var removed = index >= 0;
-            if (removed)
-            {
-                _listImplementation.RemoveAt(index);
-                OnChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
-            }
-            return removed;
         }
 
         public int Count

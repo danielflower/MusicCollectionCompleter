@@ -51,7 +51,7 @@ namespace MusicCollectionCompleter.MusicCollectionCompleterTests.Services
 
         private static string Json(string filename)
         {
-            var jsonFile = SongTest.GetFile("iTunes JSON\\" + filename);
+            var jsonFile = SongTest.GetFile("iTunes JSON" + Path.DirectorySeparatorChar + filename);
             var json = File.ReadAllText(jsonFile.FullName);
             return json;
         }

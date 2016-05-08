@@ -10,7 +10,7 @@ namespace MusicCollectionCompleter.MusicCollectionCompleterTests.Services
         [Test]
         public void CanLoadTagInfo()
         {
-            Song bloveGrapes = GetSong("The Can't Notters\\Blove Grapes (special edition)\\Disc 1\\01 Blove Grapes!.mp3");
+            Song bloveGrapes = GetSong(Path.Combine("The Can't Notters", "Blove Grapes (special edition)", "Disc 1", "01 Blove Grapes!.mp3"));
             bloveGrapes.LoadInfo();
             Assert.AreEqual("The Can't Notters", bloveGrapes.Artist);
             Assert.AreEqual("Blove Grapes (special edition)", bloveGrapes.Album);
